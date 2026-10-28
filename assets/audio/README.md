@@ -1,0 +1,1 @@
+All six final MP3 recordings are included with the exact filenames referenced by script-data.js. To replace a recording, preserve its filename. Missing or unsupported files leave transcripts and manual status controls usable.
