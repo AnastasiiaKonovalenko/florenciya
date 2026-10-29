@@ -4,6 +4,7 @@
   if (!performance || !window.EXTRA_SEANCES) return;
   const base = performance.blocks;
   let previousSpeaker = null;
+  let freyaIntroduced = false;
   for (const [chapterIndex, chapter] of window.EXTRA_SEANCES.entries()) {
     const [title, lines] = chapter;
     base.push({ type: 'heading', level: 2, text: title });
@@ -24,7 +25,8 @@
         previousSpeaker = null;
       } else {
         const speaker = a;
-        base.push({ type: 'dialogue', speaker: speaker === 'ФРЕЯ' && previousSpeaker === speaker ? '' : speaker, text: b });
+        base.push({ type: 'dialogue', speaker: speaker === 'ФРЕЯ' && freyaIntroduced ? '' : speaker, text: b });
+        if (speaker === 'ФРЕЯ') freyaIntroduced = true;
         previousSpeaker = speaker;
       }
     }
