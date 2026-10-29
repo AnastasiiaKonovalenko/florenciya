@@ -20,12 +20,12 @@
           number: file.slice(0,2),
           title: window.EXTRA_TITLES[file] || 'РЕПЛИКА ДУХА',
           file: 'assets/audio/' + file,
-          transcript: '**ДУХ ' + (chapterIndex === 0 ? 'САВОНАРОЛЫ' : chapterIndex === 1 ? 'ЛОРЕНЦО' : 'ДАНТЕ') + ':**\\n\\n' + b
+          transcript: '**ДУХ ' + (chapterIndex === 0 ? 'САВОНАРОЛЫ' : chapterIndex === 1 ? 'ЛОРЕНЦО' : 'ДАНТЕ') + ':**\n\n' + b
         });
         previousSpeaker = null;
       } else {
-        const speaker = a;
-        base.push({ type: 'dialogue', speaker: speaker === 'ФРЕЯ' && freyaIntroduced ? '' : speaker, text: b });
+        const speaker = kind;
+        base.push({ type: 'dialogue', speaker: speaker === 'ФРЕЯ' && freyaIntroduced ? '' : speaker, text: a });
         if (speaker === 'ФРЕЯ') freyaIntroduced = true;
         previousSpeaker = speaker;
       }
