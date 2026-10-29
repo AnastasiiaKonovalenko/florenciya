@@ -17,8 +17,24 @@
  async function play(c,restart=false){select(cues.indexOf(c));if(active&&active!==c)stop(active);if(restart)c.audio.currentTime=0;active=c;c.error.textContent='';const request=++c.request;try{await c.audio.play();if(request!==c.request)return;c.card.scrollIntoView({behavior:'instant',block:'nearest'});}catch{if(request===c.request)fail(c);}}
  function toggle(c){if(c.audio.paused)play(c);else{c.request++;c.audio.pause();paint(c);}}
  function expand(c,value){c.transcript.hidden=!value;c.transcriptButton.setAttribute('aria-expanded',String(value));}
+ const chapterJump=document.querySelector('#chapter-jump');
+ let chapterIndex=0;
+ const chapterNames=['Паццо ди Раньери','Джироламо Савонарола','Лоренцо Медичи','Данте Алигьери'];
  data.blocks.forEach(block=>{
-  if(block.type==='heading'){root.append(el('h'+Math.max(2,Math.min(block.level,3)),'',block.text));return;}
+  if(block.type==='heading'){
+   const isChapter=block.level===2&&(block.text.includes('Сеанс первый')||chapterNames.slice(1).some(name=>block.text.includes(name)));
+   if(isChapter){
+    const i=chapterIndex++;
+    const section=el('section','chapter');section.id='chapter-'+(i+1);
+    const ornament=el('div','chapter-ornament');ornament.setAttribute('aria-hidden','true');ornament.append(el('span','','❦  ❧  ❦'));section.append(ornament);
+    const card=el('div','chapter-heading');card.append(el('div','chapter-kicker','Сеанс '+String(i+1).padStart(2,'0')+' · Интервью с духом'));
+    card.append(el('h2','chapter-name',chapterNames[i]||block.text));
+    card.append(el('p','chapter-footnote',i===0?'Пацци, или Покой нам только снится':'Голоса Флоренции · спиритический сеанс'));
+    section.append(card);root.append(section);
+    const option=el('option','',String(i+1).padStart(2,'0')+' — '+(chapterNames[i]||block.text));option.value=section.id;chapterJump.append(option);
+   }else root.append(el('h'+Math.max(2,Math.min(block.level,3)),'',block.text));
+   return;
+  }
   if(block.type==='stageDirection'){root.append(el('p','stage',block.text));return;}
   if(block.type==='dialogue'){const p=el('div','dialogue');p.append(el('span','speaker',block.speaker));rich(p,block.text);root.append(p);return;}
   if(block.type!=='audioCue')return;
@@ -51,6 +67,7 @@
    paint(c);
   }
  });
+ chapterJump.addEventListener('change',()=>{if(!chapterJump.value)return;document.getElementById(chapterJump.value)?.scrollIntoView({behavior:'smooth',block:'start'});});
  select(0);updateSummary();
  document.querySelector('#stop').onclick=()=>stop(active);
  document.querySelector('#expand').onclick=()=>cues.forEach(c=>expand(c,true));document.querySelector('#collapse').onclick=()=>cues.forEach(c=>expand(c,false));
