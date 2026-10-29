@@ -40,6 +40,17 @@
   ['play','pause'].forEach(event=>audio.addEventListener(event,()=>paint(c)));
   audio.addEventListener('ended',()=>{done.add(block.id);persist();paint(c);if(active===c)active=null;});audio.addEventListener('error',()=>fail(c));paint(c);
  });
+ window.addEventListener('florence:audio-loaded', event => {
+  for (const c of cues) {
+   const replacement=event.detail.get(c.block.file);
+   if (!replacement) continue;
+   if (active===c)stop(c);
+   c.audio.src=replacement;
+   c.audio.load();
+   c.error.textContent='';
+   paint(c);
+  }
+ });
  select(0);updateSummary();
  document.querySelector('#stop').onclick=()=>stop(active);
  document.querySelector('#expand').onclick=()=>cues.forEach(c=>expand(c,true));document.querySelector('#collapse').onclick=()=>cues.forEach(c=>expand(c,false));
